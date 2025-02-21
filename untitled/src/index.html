@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>W H A L E R S</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            background-color: hsl(210, 100%, 10%);
+            color: #ffffff;
+            font-family: 'Courier New', Courier, monospace;
+            text-align: center;
+            padding: 20px;
+            transition: background-color 0.5s ease;
+            overflow-x: hidden;
+        }
+        h1 {
+            font-size: 3.5rem;
+            margin-bottom: 20px;
+            text-shadow: 2px 2px 5px #000;
+            font-weight: 900;
+            -webkit-text-stroke: 2px white;
+            color: transparent;
+            letter-spacing: 15px;
+            transition: color 0.5s ease;
+            white-space: nowrap;
+        }
+        .container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+        .button-container {
+            display: flex;
+            justify-content: center;
+            gap: 40px;
+            flex-wrap: wrap;
+            transition: gap 0.5s ease;
+            width: 100%;
+        }
+        .whale-button {
+            width: 160px;
+            height: 120px;
+            background: url('https://upload.wikimedia.org/wikipedia/commons/3/39/Whale_icon.svg') no-repeat center;
+            background-size: contain;
+            border: none;
+            cursor: pointer;
+            margin: 20px;
+            position: relative;
+            transition: transform 0.3s ease-in-out, filter 0.5s ease;
+        }
+        .whale-button:hover {
+            transform: scale(1.1);
+        }
+        .whale-button span {
+            position: absolute;
+            bottom: 5px;
+            left: 50%;
+            transform: translateX(-50%);
+            color: #fff;
+            font-size: 16px;
+            background-color: rgba(0, 0, 0, 0.5);
+            padding: 5px 10px;
+            border-radius: 10px;
+            transition: background-color 0.5s ease;
+        }
+        audio {
+            margin-top: 30px;
+            width: 100%;
+            max-width: 600px;
+        }
+        .eq-visualizer {
+            display: flex;
+            justify-content: center;
+            align-items: flex-end;
+            gap: 10px;
+            width: 100%;
+            max-width: 800px;
+            margin-top: 40px;
+            height: 200px;
+            position: relative;
+        }
+        .bar {
+            width: 30px;
+            background-color: hsl(160, 100%, 40%);
+            display: flex;
+            justify-content: center;
+            align-items: flex-end;
+            transition: height 0.1s ease-out, background-color 0.5s ease;
+            border-radius: 10px 10px 0 0;
+            font-size: 40px;
+        }
+        .slider-container {
+            width: 80%;
+            margin-top: 30px;
+        }
+        input[type="range"] {
+            width: 100%;
+            -webkit-appearance: none;
+            height: 10px;
+            background: linear-gradient(to right, red, orange, yellow, green, cyan, blue, violet);
+            border-radius: 5px;
+            outline: none;
+            transition: background 0.5s ease;
+        }
+        .slider-label {
+            font-size: 1.5rem;
+            margin-bottom: 5px;
+        }
+        @media (max-width: 600px) {
+            h1 {
+                font-size: 2.5rem;
+                letter-spacing: 10px;
+            }
+            .whale-button {
+                width: 120px;
+                height: 90px;
+            }
+            .bar {
+                width: 20px;
+                font-size: 30px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>W H A L E R S</h1>
+        <div class="button-container" id="button-container">
+            <button class="whale-button" onclick="playSong('https://raw.githubusercontent.com/dmsatx357/whalers-test/main/SCARECROW%20DIG%20MASTER%2001_06.mp3')">
+                <span>Scarecrow</span>
+            </button>
+            <button class="whale-button" onclick="playSong('https://raw.githubusercontent.com/dmsatx357/whalers-test/main/THEMS%20THE%20BREAKS%20DIG%20MASTER%2001_07.mp3')">
+                <span>Thems The Breaks</span>
+            </button>
+            <button class="whale-button" onclick="playSong('https://raw.githubusercontent.com/dmsatx357/whalers-test/main/TREMORS%20DIG%20MASTER%2001_06.mp3')">
+                <span>Tremors</span>
+            </button>
+        </div>
+
+        <audio id="audio" controls crossorigin="anonymous"></audio>
+
+        <div class="eq-visualizer">
+            <div class="bar">🤠</div>
+            <div class="bar">🤠</div>
+            <div class="bar">🤠</div>
+            <div class="bar">🤠</div>
+            <div class="bar">🤠</div>
+            <div class="bar">🤠</div>
+            <div class="bar">🤠</div>
+            <div class="bar">🤠</div>
+        </div>
+
+        <div class="slider-container">
+            <div class="slider-label">🐳 Color Theme</div>
+            <input type="range" id="color-slider" min="0" max="360" value="210">
+        </div>
+
+        <div class="slider-container">
+            <div class="slider-label">🐳 Adjust Button Spacing</div>
+            <input type="range" id="spacing-slider" min="20" max="200" value="40">
+        </div>
+
+        <div class="slider-container">
+            <div class="slider-label">🐳 Beat Flash Intensity</div>
+            <input type="range" id="flash-slider" min="0" max="100" value="0">
+        </div>
+    </div>
+
+    <script>
+        const audio = document.getElementById('audio');
+        const bars = document.querySelectorAll('.bar');
+        const sliderColor = document.getElementById('color-slider');
+        const sliderSpacing = document.getElementById('spacing-slider');
+        const sliderFlash = document.getElementById('flash-slider');
+        const whaleButtons = document.querySelectorAll('.whale-button');
+        const buttonContainer = document.getElementById('button-container');
+        const title = document.querySelector('h1');
+        let audioContext, analyser;
+
+        // Play the selected song
+        function playSong(url) {
+            audio.src = url;
+            audio.play();
+            if (!audioContext) initVisualizer();
+        }
+
+        // Initialize the EQ visualizer
+        function initVisualizer() {
+            audioContext = new (window.AudioContext || window.webkitAudioContext)();
+            analyser = audioContext.createAnalyser();
+            analyser.fftSize = 128;
+            const source = audioContext.createMediaElementSource(audio);
+            source.connect(analyser);
+            analyser.connect(audioContext.destination);
+
+            const bufferLength = analyser.frequencyBinCount;
+            const dataArray = new Uint8Array(bufferLength);
+
+            function animate() {
+                requestAnimationFrame(animate);
+                analyser.getByteFrequencyData(dataArray);
+                const flashIntensity = sliderFlash.value / 100;
+
+                bars.forEach((bar, index) => {
+                    const value = dataArray[index % bufferLength];
+                    const height = (value / 255) * 150 + 30;
+                    bar.style.height = `${height}px`;
+
+                    if (flashIntensity > 0) {
+                        const hue = Math.floor((value / 255) * 360);
+                        const lightness = 10 + (flashIntensity * (value / 255) * 40);
+                        document.body.style.backgroundColor = `hsl(${hue}, 100%, ${lightness}%)`;
+                        bar.style.backgroundColor = `hsl(${hue}, 100%, ${40 + flashIntensity * 20}%)`;
+                        title.style.color = `hsl(${hue}, 100%, ${70 + flashIntensity * 10}%)`;
+                    }
+                });
+            }
+            animate();
+        }
+
+        // Color theme slider functionality
+        sliderColor.addEventListener('input', function () {
+            const hue = sliderColor.value;
+            document.body.style.backgroundColor = `hsl(${hue}, 100%, 10%)`;
+            bars.forEach(bar => bar.style.backgroundColor = `hsl(${hue}, 100%, 40%)`);
+            whaleButtons.forEach(button => button.style.filter = `hue-rotate(${hue}deg)`);
+            title.style.color = `hsl(${hue}, 100%, 70%)`;
+        });
+
+        // Button spacing slider functionality
+        sliderSpacing.addEventListener('input', function () {
+            const spacing = sliderSpacing.value;
+            buttonContainer.style.gap = `${spacing}px`;
+        });
+    </script>
+</body>
+</html>
